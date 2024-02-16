@@ -1,5 +1,7 @@
 doctrine:
     dbal:
+        types:
+            NotificationTypes: App\DBAL\Types\NotificationTypes
         driver: pdo_pgsql  # Используем PDO для PostgreSQL
         server_version: '14'  # Укажите версию вашего сервера PostgreSQL
         charset: utf8mb4  # В PostgreSQL используется UTF-8, но для совместимости вы можете оставить utf8mb4

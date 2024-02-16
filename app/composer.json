@@ -9,16 +9,24 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "doctrine/dbal": "^3",
+        "doctrine/common": "^3.4",
+        "doctrine/dbal": "^3.7",
         "doctrine/doctrine-bundle": "^2.11",
         "doctrine/doctrine-migrations-bundle": "^3.3",
-        "doctrine/orm": "^3.0",
+        "doctrine/orm": "^2.16",
+        "fresh/doctrine-enum-bundle": "10.0.0",
+        "symfony/config": "^7.0",
         "symfony/console": "7.1.*",
+        "symfony/dependency-injection": "^7.0",
+        "symfony/doctrine-bridge": "^7.0",
         "symfony/dotenv": "7.1.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "7.1.*",
+        "symfony/http-kernel": "^7.0",
         "symfony/runtime": "7.1.*",
-        "symfony/yaml": "7.1.*"
+        "symfony/validator": "^7.0",
+        "symfony/yaml": "7.1.*",
+        "twig/twig": "^3.8"
     },
     "config": {
         "allow-plugins": {
@@ -68,5 +76,8 @@
             "allow-contrib": false,
             "require": "7.1.*"
         }
+    },
+    "require-dev": {
+        "symfony/maker-bundle": "^1.54"
     }
 }

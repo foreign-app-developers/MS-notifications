@@ -1,4 +1,4 @@
-include .env
+
 
 up:
 	cd docker && docker-compose up -d --build

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/MS_Noification.iml" filepath="$PROJECT_DIR$/.idea/MS_Noification.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/new_proj.iml" filepath="$PROJECT_DIR$/.idea/new_proj.iml" />
     </modules>
   </component>
 </project>

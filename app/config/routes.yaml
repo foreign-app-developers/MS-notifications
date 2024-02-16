@@ -1,0 +1,26 @@
+
+controllers:
+    resource: ../src/Controller/
+    type: attribute
+
+course_routes:
+    resource: '../src/Controller/CourseController.php'
+    type: annotation
+
+task_routes:
+    resource: '../src/Controller/TaskController.php'
+    type: annotation
+
+user_routes:
+    resource: '../src/Controller/UserController.php'
+    type: annotation
+
+app.swagger_ui:
+  path: /api/doc
+  methods: GET
+  defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
+
+app.swagger:
+  path: /api/doc.json
+  methods: GET
+  defaults: { _controller: nelmio_api_doc.controller.swagger }

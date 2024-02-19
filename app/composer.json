@@ -15,6 +15,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^2.16",
         "fresh/doctrine-enum-bundle": "10.0.0",
+        "guzzlehttp/guzzle": "^7.8",
         "symfony/config": "^7.0",
         "symfony/console": "7.1.*",
         "symfony/dependency-injection": "^7.0",
@@ -23,10 +24,13 @@
         "symfony/flex": "^2",
         "symfony/framework-bundle": "7.1.*",
         "symfony/http-kernel": "^7.0",
+        "symfony/notifier": "7.1.*",
         "symfony/runtime": "7.1.*",
+        "symfony/telegram-notifier": "7.1.*",
         "symfony/validator": "^7.0",
         "symfony/yaml": "7.1.*",
-        "twig/twig": "^3.8"
+        "twig/twig": "^3.8",
+        "westacks/telebot": "^3.1"
     },
     "config": {
         "allow-plugins": {

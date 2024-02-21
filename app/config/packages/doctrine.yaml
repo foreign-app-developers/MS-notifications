@@ -2,15 +2,16 @@ doctrine:
     dbal:
         types:
             NotificationTypes: App\DBAL\Types\NotificationTypes
-        driver: pdo_pgsql  # Используем PDO для PostgreSQL
-        server_version: '14'  # Укажите версию вашего сервера PostgreSQL
-        charset: utf8mb4  # В PostgreSQL используется UTF-8, но для совместимости вы можете оставить utf8mb4
-        host: db_notific  # Имя сервиса контейнера PostgreSQL
-        port: 5432  # Порт PostgreSQL
+        driver: pdo_pgsql
+        server_version: '14'
+        charset: utf8mb4
+        host: db_notific
+        port: 5432
         dbname: 'db_notification'
         user: 'admin'
         password: 'root'
-        url: '%env(resolve:DATABASE_URL)%'
+        url: 'postgresql://admin:root@db_notific:5432/db_notification?serverVersion=16&charset=utf8'
+
 
 
         # IMPORTANT: You MUST configure your server version,

@@ -25,22 +25,23 @@ class TelegramNotifierController extends AbstractController
     #[Route('/telegram/notifier', name: 'app_telegram_notifier')]
     public function index(): JsonResponse
     {
-        $chatMessage = new ChatMessage('Я не бот, я человек. Помоги, спаси меня');
+        $messageText = '<b>Сегодня в Томске холодно. Одевайтесь теплее.</b>';
 
-// Создаем параметры для Telegram
-        $telegramOptions = (new TelegramOptions())
-            ->chatId('894761531')
-            ->parseMode('MarkdownV2')
-            ->disableWebPagePreview(true)
-            ->disableNotification(true);
+        $chatIds = ['543463540', '979327862', '894761531','527791785','605031557','845213915'];
 
-// Добавляем пользовательские параметры к чат-сообщению и отправляем сообщение
-        $chatMessage->options($telegramOptions);
+        foreach ($chatIds as $chatId) {
+            $chatMessage = new ChatMessage($messageText);
+            $telegramOptions = (new TelegramOptions())
+                ->chatId($chatId)
+                ->parseMode('HTML')
+                ->disableWebPagePreview(true)
+                ->disableNotification(false);
+            $chatMessage->options($telegramOptions);
+            $this->chatter->send($chatMessage);
+        }
 
-        $this->chatter->send($chatMessage);
         return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/TelegramNotifierController.php',
+            'message' => 'Notification sent successfully!',
         ]);
     }
 }

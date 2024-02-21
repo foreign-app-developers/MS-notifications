@@ -7,6 +7,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use WeStacks\TeleBot\Objects\Update;
 use WeStacks\TeleBot\TeleBot;
 #[AsCommand(
     name: 'tg:start',
@@ -21,9 +22,21 @@ class TgbotCommand extends Command
     {
         $output->writeln('Tg bot is working...');
 
+        $handler = function(TeleBot $bot, Update $update, $next) {
+            if ($update->message->text !== '/notify') {
+                return $bot->sendMessage([
+                    'chat_id' => $update->chat()->id,
+                    'text' => 'Я просто бот для уведомлений, я вас не понимаю('
+                ]);
+            }
+
+            return $next();
+        };
+
         $bot = new TeleBot([
             'token' => '7036475639:AAFyl1_cvNTjTMGRSVZDx6AFy_bcCiZrir8',
             'handlers' => [
+                $handler,
                 TelegramHandler::class,
             ]
         ]);
@@ -39,9 +52,15 @@ class TgbotCommand extends Command
                 $id = $update->chat()->id;
                 $name = $update->chat()->first_name;
 
-                $data = "$id $name\n";
-                $filePath = __DIR__. '/Telegram_id.txt';
-                file_put_contents($filePath, $data, FILE_APPEND);
+                // Проверяем, есть ли запись с таким ID в файле
+                $filePath = __DIR__ . '/Telegram_id.txt';
+                $existingData = file_get_contents($filePath);
+
+                if (!str_contains($existingData, "$id $name")) {
+                    // Записываем только если записи с таким ID нет
+                    $data = "$id $name\n";
+                    file_put_contents($filePath, $data, FILE_APPEND);
+                }
             }
         }
 

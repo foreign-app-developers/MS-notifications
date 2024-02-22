@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: CI
 
 on:
   push:
@@ -6,21 +6,33 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:latest
+
     steps:
-    - name: Checkout code
+    - name: Получение кода
       uses: actions/checkout@v2
 
-    - name: Display current directory
-      run: pwd
+    - name: Настройка PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 7.4
 
-    - name: List files in the directory
-      run: ls -al
+    - name: Установка зависимостей Composer
+      run: |
+        cd docker &&
+        docker-compose exec ms_notification composer install
 
-    - name: Run make up
-      run: make up
+    - name: Создание базы данных (если еще не существует)
+      run: |
+        cd docker &&
+        docker-compose exec ms_notification php bin/console doctrine:database:create --if-not-exists
 
-    - name: Display Docker containers
-      run: docker ps
+    - name: Выполнение миграций
+      run: |
+        cd docker &&
+        docker-compose exec ms_notification php bin/console doctrine:migrations:migrate --no-interaction

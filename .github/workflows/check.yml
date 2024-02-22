@@ -1,4 +1,4 @@
-name: Build with Makefile
+name: Build and Deploy
 
 on:
   push:
@@ -6,12 +6,21 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Build with Makefile
+    - name: Display current directory
+      run: pwd
+
+    - name: List files in the directory
+      run: ls -al
+
+    - name: Run make up
       run: make up
+
+    - name: Display Docker containers
+      run: docker ps

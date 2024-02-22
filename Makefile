@@ -2,9 +2,9 @@
 
 up:
 	cd docker && docker-compose up -d --build
-	cd docker && docker-compose exec ms_notification composer install
-	cd docker && docker-compose exec ms_notification php bin/console doctrine:database:create --if-not-exists
-	cd docker && docker-compose exec ms_notification php bin/console doctrine:migrations:migrate --no-interaction
+	cd docker && docker-compose -T exec ms_notification composer install
+	cd docker && docker-compose -T exec ms_notification php bin/console doctrine:database:create --if-not-exists
+	cd docker && docker-compose -T exec ms_notification php bin/console doctrine:migrations:migrate --no-interaction
 up-stage:
 	cp docker/.env.stage-example .env
 	cp docker/.env.stage-example docker/.env

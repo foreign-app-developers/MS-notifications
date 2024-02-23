@@ -8,6 +8,7 @@
     "require": {
         "php": ">=8.2",
         "ext-ctype": "*",
+        "ext-http": "*",
         "ext-iconv": "*",
         "doctrine/common": "^3.4",
         "doctrine/dbal": "^3.7",
@@ -23,15 +24,17 @@
         "symfony/dotenv": "7.1.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "7.1.*",
+        "symfony/google-mailer": "7.1.*",
         "symfony/http-kernel": "^7.0",
+        "symfony/mailer": "7.1.*",
+        "symfony/mime": "7.1.x-dev",
         "symfony/notifier": "7.1.*",
         "symfony/runtime": "7.1.*",
         "symfony/telegram-notifier": "7.1.*",
         "symfony/validator": "^7.0",
         "symfony/yaml": "7.1.*",
         "twig/twig": "^3.8",
-        "westacks/telebot": "^3.1",
-      "ext-http": "*"
+        "westacks/telebot": "^3.1"
     },
     "config": {
         "allow-plugins": {

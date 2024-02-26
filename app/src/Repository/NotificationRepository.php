@@ -53,4 +53,12 @@ class NotificationRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    public function remove(Notification $notification, bool $flush = false): void
+    {
+        $this->getEntityManager()->remove($notification);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
 }

@@ -1,9 +1,8 @@
 
 
 up:
-	cd docker &&
-
-	cd docker && docker-compose exec ms_notification composer install
+	cd docker && docker-compose up -d --build
+	cd docker && docker-compose exec ms_notification composer install --ignore-platform-req=ext-http
 	cd docker && docker-compose exec ms_notification php bin/console doctrine:database:create --if-not-exists
 	cd docker && docker-compose exec ms_notification php bin/console doctrine:migrations:migrate --no-interaction
 up-stage:

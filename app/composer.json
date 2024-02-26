@@ -82,6 +82,6 @@
         }
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.54"
+        "symfony/manjulf gker-bundle": "^1.54"
     }
 }

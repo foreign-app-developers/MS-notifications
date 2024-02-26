@@ -10,7 +10,7 @@ doctrine:
         dbname: 'db_notification'
         user: 'admin'
         password: 'root'
-        url: '%env(resolve:DATABASE_URL)%'
+        url: 'postgresql://admin:root@db_notific:5432/db_notification?serverVersion=16&charset=utf8'
 
 
         # IMPORTANT: You MUST configure your server version,

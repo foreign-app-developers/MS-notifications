@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  ms_notification:
+    container_name: ms_notification
+    build: dockerfile/php
+    restart: on-failure
+    expose:
+      - "9000"
+    volumes:
+      - ../app:/var/www/html
+      - ../app/vendor:/var/www/html/vendor
+    links:
+      - db_notific
+
+  nginx_notification:
+    container_name: nginx_notification
+    image: nginx:latest
+    restart: on-failure
+    ports:
+      - "8000:80"
+    volumes:
+      - ../app:/var/www/html
+      - ./logs/nginx:/var/log/nginx
+      - ./config/nginx:/etc/nginx/conf.d
+    links:
+      - ms_notification
+
+  db_notific:
+    container_name: db_notific
+    ports:
+      - "5438:5432"
+    environment:
+      - POSTGRES_NAME=db_notification
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=admin
+    image: postgres:14.3-alpine

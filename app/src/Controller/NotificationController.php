@@ -20,14 +20,16 @@ class NotificationController extends AbstractController
     #[Route('/send', name: 'add_notification',methods: "POST")]
     public function sendNotification(NotificationRepository $repo, Request $request, TgService $tgService, EmailService $emailService, SmsService $smsService):JsonResponse
     {
+        date_default_timezone_set('Asia/Tomsk');
+        $date = (new \DateTime());
         $data = json_decode($request->getContent(), true);
         $notification = new Notification();
         $notification->setContent($data['content']);
         $notification->setFromVal('asd');
-        $notification->setMoment(new \DateTime());
+        $notification->setMoment($date);
         $notification->setTitle($data['title']);
         $notification->setIsReaded(false);
-        $notification->setTimeToSend(new \DateTime());
+        $notification->setTimeToSend($date);
         $notification->setToVal($data['to']);
         if($data['type'] == 'sms'){
             $notification->setType(NotificationTypes::SMS);

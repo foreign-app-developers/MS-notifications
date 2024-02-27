@@ -1,0 +1,91 @@
+{
+    "name": "symfony/skeleton",
+    "type": "project",
+    "license": "MIT",
+    "description": "A minimal Symfony project recommended to create bare bones applications",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.2",
+        "ext-ctype": "*",
+        "ext-http": "*",
+        "ext-iconv": "*",
+        "doctrine/common": "^3.4",
+        "doctrine/dbal": "^3.7",
+        "doctrine/doctrine-bundle": "^2.11",
+        "doctrine/doctrine-migrations-bundle": "^3.3",
+        "doctrine/orm": "^2.16",
+        "fresh/doctrine-enum-bundle": "10.0.0",
+        "guzzlehttp/guzzle": "^7.8",
+        "symfony/config": "^7.0",
+        "symfony/console": "7.1.*",
+        "symfony/dependency-injection": "^7.0",
+        "symfony/doctrine-bridge": "^7.0",
+        "symfony/dotenv": "7.1.*",
+        "symfony/flex": "^2",
+        "symfony/framework-bundle": "7.1.*",
+        "symfony/google-mailer": "7.1.*",
+        "symfony/http-kernel": "^7.0",
+        "symfony/mailer": "7.1.*",
+        "symfony/mime": "7.1.x-dev",
+        "symfony/notifier": "7.1.*",
+        "symfony/runtime": "7.1.*",
+        "symfony/telegram-notifier": "7.1.*",
+        "symfony/validator": "^7.0",
+        "symfony/yaml": "7.1.*",
+        "twig/twig": "^3.8",
+        "westacks/telebot": "^3.1"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
+        },
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        }
+    },
+    "replace": {
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-php73": "*",
+        "symfony/polyfill-php74": "*",
+        "symfony/polyfill-php80": "*",
+        "symfony/polyfill-php81": "*",
+        "symfony/polyfill-php82": "*"
+    },
+    "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
+        "post-install-cmd": [
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
+        ]
+    },
+    "conflict": {
+        "symfony/symfony": "*"
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "7.1.*"
+        }
+    },
+    "require-dev": {
+        "symfony/maker-bundle": "^1.54"
+    }
+}

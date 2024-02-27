@@ -88,5 +88,38 @@ class NotificationController extends AbstractController
             'data' => $notification
         ]);
     }
+    #[Route('/mark-read/{id}', name: 'mark_single_notification_as_read', methods: 'PUT')]
+    public function markSingleAsRead(NotificationRepository $repo, int $id): JsonResponse
+    {
+        $notification = $repo->find($id);
+
+        if (!$notification) {
+            return $this->json(['message' => 'Уведомление не найдено.'], 404);
+        }
+
+        $notification->setIsReaded(true);
+        $repo->save($notification, true);
+
+        return $this->json(['message' => 'Уведомление успешно помечено как прочитанное!']);
+    }
+
+    #[Route('/mark-all-read', name: 'mark_all_notifications_as_read', methods: 'PUT')]
+    public function markAllAsRead(Request $request, NotificationRepository $repo): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (empty($data['type']) || empty($data['fromVal'])) {
+            return $this->json(['message' => 'Некорректные данные'], 400);
+        }
+
+        $notifications = $repo->findBy(['type' => $data['type'], 'from_val' => $data['fromVal'], 'isReaded' => false]);
+
+        foreach ($notifications as $notification) {
+            $notification->setIsReaded(true);
+            $repo->save($notification, true);
+        }
+
+        return $this->json(['message' => 'Все уведомления успешно помечены как прочитанные!']);
+    }
 
 }

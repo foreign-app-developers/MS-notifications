@@ -7,6 +7,7 @@ use App\Entity\Notification;
 use App\Repository\NotificationRepository;
 use App\Service\EmailService;
 use App\Service\TgService;
+use App\Service\SmsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +18,7 @@ class NotificationController extends AbstractController
 {
 
     #[Route('/send', name: 'add_notification',methods: "POST")]
-    public function sendNotification(NotificationRepository $repo, Request $request, TgService $tgService, EmailService $emailService):JsonResponse
+    public function sendNotification(NotificationRepository $repo, Request $request, TgService $tgService, EmailService $emailService, SmsService $smsService):JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $notification = new Notification();
@@ -30,6 +31,8 @@ class NotificationController extends AbstractController
         $notification->setToVal($data['to']);
         if($data['type'] == 'sms'){
             $notification->setType(NotificationTypes::SMS);
+            $smsService->sendNotification($notification);
+            $repo->save($notification, True);
         }
         if($data['type'] == 'email'){
             $notification->setType(NotificationTypes::EMAIL);

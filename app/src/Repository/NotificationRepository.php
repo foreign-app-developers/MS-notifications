@@ -61,4 +61,14 @@ class NotificationRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    public function findByType(string $type): array
+    {
+        return $this->createQueryBuilder('n')
+            ->andWhere('n.type = :type')
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->getResult();
+    }
+
 }

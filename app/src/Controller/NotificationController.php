@@ -126,5 +126,29 @@ class NotificationController extends AbstractController
 
         return $this->json(['message' => 'Все уведомления успешно помечены как прочитанные!']);
     }
+    #[Route('/sorted', name: 'sorted_notifications', methods: 'GET')]
+    public function sortNotifications(NotificationRepository $repo, Request $request): JsonResponse
+    {
+
+        $type = $request->query->get('type', null);
+
+        if ($type === null) {
+            return $this->json(['message' => 'Отсутствует параметр type.'], 400);
+        }
+
+        // Проверка на валидность типа для предотвращения SQL-инъекций
+        $validTypes = ['sms', 'email', 'tg'];
+
+        if (!in_array($type, $validTypes)) {
+            return $this->json(['message' => 'Неверный тип уведомлений.'], 400);
+        }
+
+        $notifications = $repo->findByType($type);
+
+        return $this->json([
+            'data' => $notifications,
+            'message' => "Уведомления типа '{$type}' успешно получены!",
+        ]);
+    }
 
 }

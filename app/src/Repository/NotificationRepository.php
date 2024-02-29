@@ -71,4 +71,38 @@ class NotificationRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findByTypeAndToVal(string $type, string $toVal): array
+    {
+        return $this->createQueryBuilder('n')
+            ->andWhere('n.type = :type')
+            ->andWhere('n.to_val = :toVal')
+            ->setParameters(['type' => $type, 'toVal' => $toVal])
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByReadStatus(bool $isReaded): array
+    {
+        return $this->createQueryBuilder('n')
+            ->where('n.isReaded = :isReaded')
+            ->setParameter('isReaded', $isReaded ? 1 : 0)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByReadStatusAndToVal(bool $isReaded, ?string $toVal): array
+    {
+        $queryBuilder = $this->createQueryBuilder('n')
+            ->where('n.isReaded = :isReaded')
+            ->setParameter('isReaded', $isReaded ? 1 : 0);
+
+        if ($toVal !== null) {
+            $queryBuilder
+                ->andWhere('n.to_val = :toVal')
+                ->setParameter('toVal', $toVal);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
 }

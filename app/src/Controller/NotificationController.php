@@ -136,25 +136,58 @@ class NotificationController extends AbstractController
     #[Route('/sorted', name: 'sorted_notifications', methods: 'GET')]
     public function sortNotifications(NotificationRepository $repo, Request $request): JsonResponse
     {
-
         $type = $request->query->get('type', null);
+        $toVal = $request->query->get('toVal', null);
 
         if ($type === null) {
             return $this->json(['message' => 'Отсутствует параметр type.'], 400);
         }
 
-        // Проверка на валидность типа для предотвращения SQL-инъекций
         $validTypes = ['sms', 'email', 'tg'];
 
         if (!in_array($type, $validTypes)) {
             return $this->json(['message' => 'Неверный тип уведомлений.'], 400);
         }
 
-        $notifications = $repo->findByType($type);
+        if ($toVal !== null) {
+            $notifications = $repo->findByTypeAndToVal($type, $toVal);
+        } else {
+            $notifications = $repo->findByType($type);
+        }
 
         return $this->json([
             'data' => $notifications,
-            'message' => "Уведомления типа '{$type}' успешно получены!",
+            'message' => $toVal
+                ? "Уведомления типа '{$type}' для пользователя '{$toVal}' успешно получены!"
+                : "Уведомления типа '{$type}' успешно получены!",
+        ]);
+    }
+
+    #[Route('/sorted-read-status', name: 'sorted_read_status_notifications', methods: 'GET')]
+    public function sortNotificationsByReadStatus(NotificationRepository $repo, Request $request): JsonResponse
+    {
+        $isReaded = $request->query->get('isReaded', null);
+        $toVal = $request->query->get('toVal', null);
+
+        if ($isReaded === null) {
+            return $this->json(['message' => 'Отсутствует параметр isReaded.'], 400);
+        }
+
+        if (!in_array($isReaded, [true, false, 'true', 'false'])) {
+            return $this->json(['message' => 'Неверное значение параметра isReaded.'], 400);
+        }
+
+        if ($toVal !== null) {
+            $notifications = $repo->findByReadStatusAndToVal($isReaded == 'true' ? true : false, $toVal);
+        } else {
+            $notifications = $repo->findByReadStatus($isReaded == 'true' ? true : false);
+        }
+
+        return $this->json([
+            'data' => $notifications,
+            'message' => $toVal
+                ? "Уведомления с isReaded '{$isReaded}' для пользователя '{$toVal}' успешно получены!"
+                : "Уведомления с isReaded '{$isReaded}' успешно получены!",
         ]);
     }
 

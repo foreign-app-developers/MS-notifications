@@ -19,8 +19,9 @@ class Notification
 
     #[ORM\Column(type:"NotificationTypes")]
     #[DoctrineAssert\EnumType(entity: NotificationTypes::class)]
-
     private $type = null;
+    #[ORM\Column]
+    private ?bool $isHistory = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
@@ -30,6 +31,8 @@ class Notification
 
     #[ORM\Column]
     private ?bool $isReaded = null;
+    #[ORM\Column]
+    private ?bool $isSent = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $moment = null;
@@ -37,10 +40,10 @@ class Notification
     #[ORM\Column(length: 255)]
     private ?string $from_val = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $to_val = null;
+    #[ORM\Column(type: "json")]
+    private ?array $to_val = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE,nullable: true)]
     private ?\DateTimeInterface $timeToSend = null;
 
     public function getId(): ?int
@@ -95,6 +98,12 @@ class Notification
 
         return $this;
     }
+    public function setIsSent(bool $isSent): static
+    {
+        $this->isSent = $isSent;
+
+        return $this;
+    }
 
     public function getMoment(): ?\DateTimeInterface
     {
@@ -120,12 +129,13 @@ class Notification
         return $this;
     }
 
-    public function getToVal(): ?string
+    public function getToVal(): ?array
     {
         return $this->to_val;
     }
 
-    public function setToVal(string $to_val): static
+
+    public function setToVal(array $to_val): static
     {
         $this->to_val = $to_val;
 
@@ -142,5 +152,19 @@ class Notification
         $this->timeToSend = $timeToSend;
 
         return $this;
+    }
+    public function setIsHistory(bool $isHistory): static
+    {
+        $this->isHistory = $isHistory;
+
+        return $this;
+    }
+    public function isIsHistory(): ?bool
+    {
+        return $this->isHistory;
+    }
+    public function isIsSent(): ?bool
+    {
+        return $this->isSent;
     }
 }

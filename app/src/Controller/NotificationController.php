@@ -25,32 +25,38 @@ class NotificationController extends AbstractController
         $date = (new \DateTime());
         $data = json_decode($request->getContent(), true);
         $notification = new Notification();
+        $notification->setIsHistory($data['isHistory']);
         $notification->setContent($data['content']);
-        $notification->setFromVal('asd');
+        $notification->setFromVal($data['from']);
         $notification->setMoment($date);
         $notification->setTitle($data['title']);
         $notification->setIsReaded(false);
-        $notification->setTimeToSend($date);
         $notification->setToVal($data['to']);
-        if($data['type'] == 'sms'){
-            $notification->setType(NotificationTypes::SMS);
-            $smsService->sendNotification($notification);
-            $repo->save($notification, True);
-        }
-        if($data['type'] == 'email'){
-            $notification->setType(NotificationTypes::EMAIL);
-            $emailService->sendNotification($notification);
-            $repo->save($notification, True);
-        }
-        if($data['type'] == 'tg'){
-            $notification->setType(NotificationTypes::TG);
-            $tgService->sendNotification($notification);
-            $repo->save($notification, True);
-        }
-        if($data['type'] == 'push'){
-            $notification->setType(NotificationTypes::PUSH);
-            $pushService->sendNotification($notification);
-            $repo->save($notification, True);
+        if ($notification->getTimeToSend() == null) {
+            if ($data['type'] == 'sms') {
+                $notification->setType(NotificationTypes::SMS);
+                $smsService->sendNotification($notification);
+                $notification->setIsSent(1);
+                $repo->save($notification, True);
+            }
+            if ($data['type'] == 'email') {
+                $notification->setType(NotificationTypes::EMAIL);
+                $emailService->sendNotification($notification);
+                $notification->setIsSent(1);
+                $repo->save($notification, True);
+            }
+            if ($data['type'] == 'tg') {
+                $notification->setType(NotificationTypes::TG);
+                $tgService->sendNotification($notification);
+                $notification->setIsSent(1);
+                $repo->save($notification, True);
+            }
+            if ($data['type'] == 'push') {
+                $notification->setType(NotificationTypes::PUSH);
+                $pushService->sendNotification($notification);
+                $notification->setIsSent(1);
+                $repo->save($notification, True);
+            }
         }
 
         return $this->json([

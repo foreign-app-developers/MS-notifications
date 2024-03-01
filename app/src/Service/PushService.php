@@ -3,7 +3,9 @@
 namespace App\Service;
 
 use App\Entity\Notification;
+use App\Entity\UserRequisite;
 use App\NotificationInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Google\Exception;
 use Google_Client;
 use Google_Exception;
@@ -12,6 +14,11 @@ use Google_Service_FirebaseCloudMessaging;
 
 class PushService implements NotificationInterface
 {
+    private EntityManagerInterface $entityManager;
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
 
     function getOATHToken()
     {
@@ -64,22 +71,30 @@ class PushService implements NotificationInterface
 
     function sendNotification(Notification $notification): void
     {
-        $accessToken = $this->getOATHToken();
-        $token = $_ENV['PUSH_' . $notification->getToVal()];
-        $payload = ["message" => ["token" => $token, "notification"=>["title" => $notification->getTitle(), "body"=> $notification->getContent()]]];
-        $postdata = json_encode($payload);
+        $toUserIds = $notification->getToVal();
+        $userRequisiteRepository = $this->entityManager->getRepository(UserRequisite::class);
+        $toAddresses = [];
+        foreach ($toUserIds as $userId) {
+            $userRequisite = $userRequisiteRepository->findOneBy(['userId' => $userId, 'type' => 'push']);
+            $toAddresses[] = $userRequisite->getRequisite();
+        }
+        foreach ($toAddresses as $token ) {
+            $accessToken = $this->getOATHToken();
+            $payload = ["message" => ["token" => $token, "notification" => ["title" => $notification->getTitle(), "body" => $notification->getContent()]]];
+            $postdata = json_encode($payload);
 
-        $ch = curl_init('https://fcm.googleapis.com/v1/projects/'. $_ENV['GOOGLE_PROJECT_NAME'] .'/messages:send');
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Authorization: Bearer ' . $accessToken,
-        ]);
+            $ch = curl_init('https://fcm.googleapis.com/v1/projects/' . $_ENV['GOOGLE_PROJECT_NAME'] . '/messages:send');
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $accessToken,
+            ]);
 
-        curl_exec($ch);
-        curl_close($ch);
+            curl_exec($ch);
+            curl_close($ch);
+        }
 
 
     }

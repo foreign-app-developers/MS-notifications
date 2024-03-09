@@ -16,9 +16,11 @@
         "doctrine/doctrine-bundle": "^2.11",
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^2.16",
+        "enqueue/amqp-ext": "^0.10.20",
         "fresh/doctrine-enum-bundle": "10.0.0",
         "google/apiclient": "^2.15",
         "guzzlehttp/guzzle": "^7.8",
+        "symfony/amqp-messenger": "7.1.*",
         "symfony/config": "^7.0",
         "symfony/console": "7.1.*",
         "symfony/dependency-injection": "^7.0",
@@ -29,6 +31,7 @@
         "symfony/google-mailer": "7.1.*",
         "symfony/http-kernel": "^7.0",
         "symfony/mailer": "7.1.*",
+        "symfony/messenger": "7.1.*",
         "symfony/mime": "7.1.x-dev",
         "symfony/notifier": "7.1.*",
         "symfony/runtime": "7.1.*",
@@ -39,7 +42,7 @@
         "westacks/telebot": "^3.1"
     },
     "config": {
-        "process-timeout": 1200,
+        "process-timeout": 2400,
         "allow-plugins": {
             "php-http/discovery": true,
             "symfony/flex": true,

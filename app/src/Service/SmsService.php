@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Notification;
 use App\Entity\UserRequisite;
+use App\MessageHandler\Message;
 use App\NotificationInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -14,9 +15,9 @@ class SmsService implements NotificationInterface
     {
         $this->entityManager = $entityManager;
     }
-    public function sendNotification(Notification $notification): void
+    public function sendNotification(Message $notification): void
     {
-        $toUserIds = $notification->getToVal();
+        $toUserIds = $notification->getTo();
         $userRequisiteRepository = $this->entityManager->getRepository(UserRequisite::class);
         $toAddresses = [];
         foreach ($toUserIds as $userId) {

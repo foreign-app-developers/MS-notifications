@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Notification;
 use App\Entity\UserRequisite;
+use App\MessageHandler\Message;
 use App\NotificationInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
@@ -21,9 +22,9 @@ class EmailService implements NotificationInterface
         $this->entityManager = $entityManager;
     }
 
-    public function sendNotification(Notification $notification): void
+    public function sendNotification(Message $notification): void
     {
-        $toUserIds = $notification->getToVal();
+        $toUserIds = $notification->getTo();
         $userRequisiteRepository = $this->entityManager->getRepository(UserRequisite::class);
         $toAddresses = [];
         foreach ($toUserIds as $userId) {
@@ -31,7 +32,7 @@ class EmailService implements NotificationInterface
             $toAddresses[] = $userRequisite->getRequisite();
             }
         $email = (new Email())
-            ->from($notification->getFromVal())
+            ->from("asd@asd.com")
             ->to(...$toAddresses)
             ->subject($notification->getTitle())
             ->text($notification->getContent());

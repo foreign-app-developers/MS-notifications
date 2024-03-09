@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Notification;
 use App\Entity\UserRequisite;
+use App\MessageHandler\Message;
 use App\NotificationInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Notifier\Bridge\Telegram\TelegramOptions;
@@ -21,12 +22,12 @@ class TgService implements NotificationInterface
         $this->entityManager = $entityManager;
     }
 
-    public function sendNotification(Notification $notification): string
+    public function sendNotification(Message $notification): string
     {
         $messageText = '<b>' . $notification->getTitle() . '</b>' . "\n" . $notification->getContent();
         $chatMessage = new ChatMessage($messageText);
 
-        $toUserIds = $notification->getToVal();
+        $toUserIds = $notification->getTo();
         $userRequisiteRepository = $this->entityManager->getRepository(UserRequisite::class);
         $toAddresses = [];
         foreach ($toUserIds as $userId) {

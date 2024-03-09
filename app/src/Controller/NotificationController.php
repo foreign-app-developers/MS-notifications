@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\DBAL\Types\NotificationTypes;
 use App\Entity\Notification;
+use App\MessageHandler\Message;
 use App\Repository\NotificationRepository;
 use App\Service\EmailService;
 use App\Service\PushService;
@@ -12,6 +13,7 @@ use App\Service\SmsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 
@@ -19,11 +21,12 @@ use Symfony\Component\Routing\Attribute\Route;
 class NotificationController extends AbstractController
 {
     #[Route('/send', name: 'add_notification',methods: "POST")]
-    public function sendNotification(NotificationRepository $repo, Request $request, TgService $tgService, EmailService $emailService, SmsService $smsService, PushService $pushService):JsonResponse
+    public function sendNotification(NotificationRepository $repo, Request $request, MessageBusInterface $messageBus):JsonResponse
     {
         date_default_timezone_set('Asia/Tomsk');
         $date = (new \DateTime());
         $data = json_decode($request->getContent(), true);
+        $messageBus->dispatch(new Message($data['title'],$data['content'],$data['to'],$data['type']));
         $notification = new Notification();
         $notification->setIsHistory($data['isHistory']);
         $notification->setContent($data['content']);
@@ -35,28 +38,19 @@ class NotificationController extends AbstractController
         if ($notification->getTimeToSend() == null) {
             if ($data['type'] == 'sms') {
                 $notification->setType(NotificationTypes::SMS);
-                $smsService->sendNotification($notification);
-                $notification->setIsSent(1);
-                $repo->save($notification, True);
             }
             if ($data['type'] == 'email') {
                 $notification->setType(NotificationTypes::EMAIL);
-                $emailService->sendNotification($notification);
-                $notification->setIsSent(1);
-                $repo->save($notification, True);
             }
             if ($data['type'] == 'tg') {
                 $notification->setType(NotificationTypes::TG);
-                $tgService->sendNotification($notification);
-                $notification->setIsSent(1);
-                $repo->save($notification, True);
             }
             if ($data['type'] == 'push') {
                 $notification->setType(NotificationTypes::PUSH);
-                $pushService->sendNotification($notification);
-                $notification->setIsSent(1);
-                $repo->save($notification, True);
             }
+
+            $notification->setIsSent(1);
+            $repo->save($notification);
         }
 
         return $this->json([

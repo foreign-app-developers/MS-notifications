@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Notification;
 use App\Entity\UserRequisite;
+use App\MessageHandler\Message;
 use App\NotificationInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Google\Exception;
@@ -69,9 +70,9 @@ class PushService implements NotificationInterface
     }
 
 
-    function sendNotification(Notification $notification): void
+    function sendNotification(Message $notification): void
     {
-        $toUserIds = $notification->getToVal();
+        $toUserIds = $notification->getTo();
         $userRequisiteRepository = $this->entityManager->getRepository(UserRequisite::class);
         $toAddresses = [];
         foreach ($toUserIds as $userId) {

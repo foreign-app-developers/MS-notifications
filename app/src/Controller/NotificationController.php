@@ -15,11 +15,18 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 
 #[Route('/api/notification', name: 'app_notification')]
 class NotificationController extends AbstractController
 {
+    private SerializerInterface $serializer;
+
+    public function __construct( SerializerInterface $serializer)
+    {
+        $this->serializer = $serializer;
+    }
     #[Route('/send', name: 'add_notification',methods: "POST")]
     public function sendNotification(NotificationRepository $repo, Request $request, MessageBusInterface $messageBus):JsonResponse
     {
@@ -50,11 +57,11 @@ class NotificationController extends AbstractController
             }
 
             $notification->setIsSent(1);
-            $repo->save($notification);
+            $repo->save($notification, true);
         }
 
         return $this->json([
-            'data' => $notification,
+            'data' => $this->serializer->normalize($notification->toArray(), 'json'),
             'message' => 'Уведомление успешно отправлено!',
         ]);
     }
@@ -97,7 +104,7 @@ class NotificationController extends AbstractController
 
         return $this ->json([
             'message' => 'Уведомление успешно отредактировано',
-            'data' => $notification
+            'data' => $this->serializer->normalize($notification->toArray(), 'json'),
         ]);
     }
     #[Route('/mark-read/{id}', name: 'mark_single_notification_as_read', methods: 'PUT')]
@@ -155,8 +162,13 @@ class NotificationController extends AbstractController
             $notifications = $repo->findByType($type);
         }
 
+        $normalizedNotifications = [];
+        foreach ($notifications as $notification) {
+            $normalizedNotifications[] = $this->serializer->normalize($notification->toArray(), 'json');
+        }
+
         return $this->json([
-            'data' => $notifications,
+            'data' => $normalizedNotifications,
             'message' => $toVal
                 ? "Уведомления типа '{$type}' для пользователя '{$toVal}' успешно получены!"
                 : "Уведомления типа '{$type}' успешно получены!",
@@ -183,8 +195,13 @@ class NotificationController extends AbstractController
             $notifications = $repo->findByReadStatus($isReaded == 'true' ? true : false);
         }
 
+        $normalizedNotifications = [];
+        foreach ($notifications as $notification) {
+            $normalizedNotifications[] = $this->serializer->normalize($notification->toArray(), 'json');
+        }
+
         return $this->json([
-            'data' => $notifications,
+            'data' => $normalizedNotifications,
             'message' => $toVal
                 ? "Уведомления с isReaded '{$isReaded}' для пользователя '{$toVal}' успешно получены!"
                 : "Уведомления с isReaded '{$isReaded}' успешно получены!",

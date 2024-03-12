@@ -35,6 +35,7 @@
         "symfony/mime": "7.1.x-dev",
         "symfony/notifier": "7.1.*",
         "symfony/runtime": "7.1.*",
+        "symfony/serializer": "7.1.*",
         "symfony/telegram-notifier": "7.1.*",
         "symfony/validator": "^7.0",
         "symfony/yaml": "7.1.*",

@@ -29,8 +29,8 @@ class PeriodNotification
     #[ORM\Column(length: 255)]
     private ?string $fromVal = null;
 
-    #[ORM\Column(type: "json",length: 255)]
-    private ?array $toVal = null;
+    #[ORM\Column(type: "integer")]
+    private ?int $toVal = null;
 
     #[ORM\Column(length: 255)]
     private ?string $whenSend = null;
@@ -92,12 +92,12 @@ class PeriodNotification
         return $this;
     }
 
-    public function getToVal(): array
+    public function getToVal(): int
     {
         return $this->toVal;
     }
 
-    public function setToVal(array $toVal): static
+    public function setToVal(int $toVal): static
     {
         $this->toVal = $toVal;
 

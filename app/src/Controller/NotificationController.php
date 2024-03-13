@@ -28,36 +28,45 @@ class NotificationController extends AbstractController
         $this->serializer = $serializer;
     }
     #[Route('/send', name: 'add_notification',methods: "POST")]
-    public function sendNotification(NotificationRepository $repo, Request $request, MessageBusInterface $messageBus):JsonResponse
+    public function sendNotification(NotificationRepository $repo, Request $request, MessageBusInterface $messageBus): JsonResponse
     {
         date_default_timezone_set('Asia/Tomsk');
-        $date = (new \DateTime());
+        $date = new \DateTime();
         $data = json_decode($request->getContent(), true);
-        $messageBus->dispatch(new Message($data['title'],$data['content'],$data['to'],$data['type']));
-        $notification = new Notification();
-        $notification->setIsHistory($data['isHistory']);
-        $notification->setContent($data['content']);
-        $notification->setFromVal($data['from']);
-        $notification->setMoment($date);
-        $notification->setTitle($data['title']);
-        $notification->setIsReaded(false);
-        $notification->setToVal($data['to']);
-        if ($notification->getTimeToSend() == null) {
-            if ($data['type'] == 'sms') {
-                $notification->setType(NotificationTypes::SMS);
-            }
-            if ($data['type'] == 'email') {
-                $notification->setType(NotificationTypes::EMAIL);
-            }
-            if ($data['type'] == 'tg') {
-                $notification->setType(NotificationTypes::TG);
-            }
-            if ($data['type'] == 'push') {
-                $notification->setType(NotificationTypes::PUSH);
-            }
+        $messageBus->dispatch(new Message($data['title'], $data['content'], $data['to'], $data['type']));
 
-            $notification->setIsSent(1);
-            $repo->save($notification, true);
+        $toArr = $data['to'];
+        foreach ($toArr as $to) {
+            $notification = new Notification();
+            $notification->setIsHistory($data['isHistory']);
+            $notification->setContent($data['content']);
+            $notification->setFromVal($data['from']);
+            $notification->setMoment($date);
+            $notification->setTitle($data['title']);
+            $notification->setIsReaded(false);
+
+            if ($notification->getTimeToSend() === null) {
+                switch ($data['type']) {
+                    case 'sms':
+                        $notification->setType(NotificationTypes::SMS);
+                        break;
+                    case 'email':
+                        $notification->setType(NotificationTypes::EMAIL);
+                        break;
+                    case 'tg':
+                        $notification->setType(NotificationTypes::TG);
+                        break;
+                    case 'push':
+                        $notification->setType(NotificationTypes::PUSH);
+                        break;
+                    default:
+                        // тут должна ошибка быть
+                        break;
+                }
+                $notification->setIsSent(1);
+                $notification->setToVal($to);
+                $repo->save($notification, true);
+            }
         }
 
         return $this->json([

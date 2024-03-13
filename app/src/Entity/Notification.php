@@ -6,12 +6,10 @@ use App\Repository\NotificationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\DBAL\Types\NotificationTypes;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Fresh\DoctrineEnumBundle\Validator\Constraints as DoctrineAssert;
 
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
 #[ORM\Table(name:"Notifications")]
-
 class Notification
 {
     #[ORM\Id]
@@ -42,8 +40,8 @@ class Notification
     #[ORM\Column(length: 255)]
     private ?string $from_val = null;
 
-    #[ORM\Column(type: "json")]
-    private ?array $to_val = null;
+    #[ORM\Column(type: "integer")]
+    private ?int $to_val = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE,nullable: true)]
     private ?\DateTimeInterface $timeToSend = null;
@@ -131,13 +129,13 @@ class Notification
         return $this;
     }
 
-    public function getToVal(): ?array
+    public function getToVal(): ?int
     {
         return $this->to_val;
     }
 
 
-    public function setToVal(array $to_val): static
+    public function setToVal(int $to_val): static
     {
         $this->to_val = $to_val;
 
@@ -168,21 +166,5 @@ class Notification
     public function isIsSent(): ?bool
     {
         return $this->isSent;
-    }
-    public function toArray(): array
-    {
-        return [
-            'id' => $this->id,
-            'type' => $this->type,
-            'isHistory' => $this->isHistory,
-            'content' => $this->content,
-            'title' => $this->title,
-            'isReaded' => $this->isReaded,
-            'isSent' => $this->isSent,
-            'moment' => $this->moment ? $this->moment->format('Y-m-d H:i:s') : null,
-            'from_val' => $this->from_val,
-            'to_val' => $this->to_val,
-            'timeToSend' => $this->timeToSend ? $this->timeToSend->format('Y-m-d H:i:s') : null,
-        ];
     }
 }

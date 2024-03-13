@@ -7,6 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\DBAL\Types\NotificationTypes;
 use Fresh\DoctrineEnumBundle\Validator\Constraints as DoctrineAssert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
 #[ORM\Table(name:"Notifications")]
@@ -166,5 +167,21 @@ class Notification
     public function isIsSent(): ?bool
     {
         return $this->isSent;
+    }
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'type' => $this->type,
+            'isHistory' => $this->isHistory,
+            'content' => $this->content,
+            'title' => $this->title,
+            'isReaded' => $this->isReaded,
+            'isSent' => $this->isSent,
+            'moment' => $this->moment ? $this->moment->format('Y-m-d H:i:s') : null,
+            'from_val' => $this->from_val,
+            'to_val' => $this->to_val,
+            'timeToSend' => $this->timeToSend ? $this->timeToSend->format('Y-m-d H:i:s') : null,
+        ];
     }
 }

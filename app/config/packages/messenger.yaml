@@ -5,7 +5,16 @@ framework:
 
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
-             async: '%env(MESSENGER_TRANSPORT_DSN)%'
+             async:
+               dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+             options:
+               exchange:
+                 name: msNotific
+                 type: topic
+                 default_publish_routing_key: notific
+               queues:
+                 msNotific:
+                   binding_keys: [notific]
             # failed: 'doctrine://default?queue_name=failed'
             # sync: 'sync://'
 

@@ -150,11 +150,12 @@ class NotificationController extends AbstractController
 
         return $this->json(['message' => 'Все уведомления успешно помечены как прочитанные!']);
     }
+
     #[Route('/sorted', name: 'sorted_notifications', methods: 'GET')]
     public function sortNotifications(NotificationRepository $repo, Request $request): JsonResponse
     {
         $type = $request->query->get('type', null);
-        $toVal = $request->query->get('toVal', null);
+        $toVals = $request->query->get('toVal', null);
 
         if ($type === null) {
             return $this->json(['message' => 'Отсутствует параметр type.'], Response::HTTP_BAD_REQUEST);
@@ -166,13 +167,18 @@ class NotificationController extends AbstractController
             return $this->json(['message' => 'Неверный тип уведомлений.'], Response::HTTP_BAD_REQUEST);
         }
 
-        $notification = $repo->findOneBy(['to_val' => $toVal]);
-        if (!$notification) {
-            return $this->json(['message' => 'Не найден пользователь с указанным идентификатором.'], Response::HTTP_NOT_FOUND);
-        }
+        if ($toVals !== null) {
+            $toValsArray = explode(',', $toVals);
+            $toValsArray = array_map('intval', $toValsArray);
 
-        if ($toVal !== null) {
-            $notifications = $repo->findByTypeAndToVal($type, $toVal);
+            foreach ($toValsArray as $toVal) {
+                $notification = $repo->findOneBy(['to_val' => $toVal]);
+                if (!$notification) {
+                    return $this->json(['message' => 'Не найден пользователь с идентификатором ' . $toVal], Response::HTTP_NOT_FOUND);
+                }
+            }
+
+            $notifications = $repo->findByTypeAndToVals($type, $toValsArray);
         } else {
             $notifications = $repo->findByType($type);
         }
@@ -184,8 +190,8 @@ class NotificationController extends AbstractController
 
         return $this->json([
             'data' => $normalizedNotifications,
-            'message' => $toVal
-                ? "Уведомления типа '{$type}' для пользователя '{$toVal}' успешно получены!"
+            'message' => $toValsArray
+                ? "Уведомления типа '{$type}' для пользователей '".implode("', '", $toValsArray)."' успешно получены!"
                 : "Уведомления типа '{$type}' успешно получены!",
         ]);
     }
@@ -194,20 +200,40 @@ class NotificationController extends AbstractController
     public function sortNotificationsByReadStatus(NotificationRepository $repo, Request $request): JsonResponse
     {
         $isReaded = $request->query->get('isReaded', null);
-        $toVal = $request->query->get('toVal', null);
+        $toVals = $request->query->get('toVal', null);
 
         if ($isReaded === null) {
             return $this->json(['message' => 'Отсутствует параметр isReaded.'], 400);
         }
 
-        if (!in_array($isReaded, [true, false, 'true', 'false'])) {
+        if (!in_array($isReaded, ['true', 'false'], true)) {
             return $this->json(['message' => 'Неверное значение параметра isReaded.'], 400);
         }
 
-        if ($toVal !== null) {
-            $notifications = $repo->findByReadStatusAndToVal($isReaded == 'true' ? true : false, $toVal);
+        $isReadedBool = $isReaded === 'true';
+
+        $toValsArray = [];
+        if ($toVals !== null) {
+            $toValsArray = explode(',', $toVals);
+            $toValsArray = array_map('intval', $toValsArray);
+
+            foreach ($toValsArray as $toVal) {
+                $notification = $repo->findOneBy(['to_val' => $toVal]);
+                if (!$notification) {
+                    return $this->json(['message' => 'Не найден пользователь с идентификатором ' . $toVal], Response::HTTP_NOT_FOUND);
+                }
+            }
+        }
+
+        if (!empty($toValsArray)) {
+            $notifications = $repo->findByReadStatusAndToVal($isReadedBool, $toValsArray);
         } else {
-            $notifications = $repo->findByReadStatus($isReaded == 'true' ? true : false);
+            $notifications = $repo->findByReadStatus($isReadedBool);
+        }
+
+        $selectedToVals = [];
+        foreach ($notifications as $notification) {
+            $selectedToVals[] = $notification->getToVal();
         }
 
         $normalizedNotifications = [];
@@ -217,10 +243,9 @@ class NotificationController extends AbstractController
 
         return $this->json([
             'data' => $normalizedNotifications,
-            'message' => $toVal
-                ? "Уведомления с isReaded '{$isReaded}' для пользователя '{$toVal}' успешно получены!"
+            'message' => !empty($selectedToVals)
+                ? "Уведомления с isReaded '{$isReaded}' для пользователя '".implode("', '", $selectedToVals)."' успешно получены!"
                 : "Уведомления с isReaded '{$isReaded}' успешно получены!",
         ]);
     }
-
 }

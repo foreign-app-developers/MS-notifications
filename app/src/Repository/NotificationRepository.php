@@ -71,13 +71,13 @@ class NotificationRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findByTypeAndToVal(string $type, string $toVal): array
+    public function findByTypeAndToVals(string $type, array $toVals): array
     {
         return $this->createQueryBuilder('n')
             ->andWhere('n.type = :type')
-            ->andWhere('n.to_val IN (:toVal)')
+            ->andWhere('n.to_val IN (:toVals)')
             ->setParameter('type', $type)
-            ->setParameter('toVal', $toVal)
+            ->setParameter('toVals', $toVals)
             ->getQuery()
             ->getResult();
     }
@@ -91,16 +91,16 @@ class NotificationRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findByReadStatusAndToVal(bool $isReaded, ?string $toVal): array
+    public function findByReadStatusAndToVal(bool $isReaded, array $toVals): array
     {
         $queryBuilder = $this->createQueryBuilder('n')
-            ->where('n.isReaded = :isReaded')
+            ->andWhere('n.isReaded = :isReaded')
             ->setParameter('isReaded', $isReaded ? 1 : 0);
 
-        if ($toVal !== null) {
+        if (!empty($toVals)) {
             $queryBuilder
-                ->andWhere('n.to_val = :toVal')
-                ->setParameter('toVal', $toVal);
+                ->andWhere('n.to_val IN (:toVals)')
+                ->setParameter('toVals', $toVals);
         }
 
         return $queryBuilder->getQuery()->getResult();

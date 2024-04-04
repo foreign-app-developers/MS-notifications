@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 
 #[Route('/api/notification', name: 'app_notification')]
@@ -156,13 +157,18 @@ class NotificationController extends AbstractController
         $toVal = $request->query->get('toVal', null);
 
         if ($type === null) {
-            return $this->json(['message' => 'Отсутствует параметр type.'], 400);
+            return $this->json(['message' => 'Отсутствует параметр type.'], Response::HTTP_BAD_REQUEST);
         }
 
         $validTypes = ['sms', 'email', 'tg'];
 
         if (!in_array($type, $validTypes)) {
-            return $this->json(['message' => 'Неверный тип уведомлений.'], 400);
+            return $this->json(['message' => 'Неверный тип уведомлений.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $notification = $repo->findOneBy(['to_val' => $toVal]);
+        if (!$notification) {
+            return $this->json(['message' => 'Не найден пользователь с указанным идентификатором.'], Response::HTTP_NOT_FOUND);
         }
 
         if ($toVal !== null) {

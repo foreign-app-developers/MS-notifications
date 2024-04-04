@@ -75,8 +75,9 @@ class NotificationRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('n')
             ->andWhere('n.type = :type')
-            ->andWhere('n.to_val = :toVal')
-            ->setParameters(['type' => $type, 'toVal' => $toVal])
+            ->andWhere('n.to_val IN (:toVal)')
+            ->setParameter('type', $type)
+            ->setParameter('toVal', $toVal)
             ->getQuery()
             ->getResult();
     }

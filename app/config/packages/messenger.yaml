@@ -9,11 +9,11 @@ framework:
         dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
         options:
           exchange:
-            name: messages_tusur
+            name: ms_notific
             type: topic
             default_publish_routing_key: notific
           queues:
-            msNotific:
+            ms_notific:
               binding_keys: [notific]
       # failed: 'doctrine://default?queue_name=failed'
       # sync: 'sync://'

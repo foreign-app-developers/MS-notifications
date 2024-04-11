@@ -1,0 +1,22 @@
+nelmio_api_doc:
+    documentation:
+        servers:
+            - url: http://localhost:8000
+              description: API over HTTP
+            - url: https://example.com
+              description: API over HTTPS
+        info:
+            title: MS_Notific
+            description: Микросервис для отправки уведомлений
+            version: 1.0.0
+        components:
+            securitySchemes:
+                Bearer:
+                    type: apiKey
+                    name: Authorization
+                    in: header
+        security:
+            - Bearer: []
+    areas:
+        path_patterns: # an array of regexps (document only routes under /api, except /api/doc)
+            - ^/api(?!/doc$)

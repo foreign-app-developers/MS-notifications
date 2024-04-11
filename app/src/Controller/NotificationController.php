@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\DBAL\Types\NotificationTypes;
 use App\Entity\Notification;
+use App\Entity\UserRequisite;
 use App\MessageHandler\Message;
 use App\Repository\NotificationRepository;
+use App\Repository\UserRequisiteRepository;
 use App\Service\EmailService;
 use App\Service\PushService;
 use App\Service\TgService;
@@ -17,6 +19,8 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Attributes as OA;
 
 
 #[Route('/api/notification', name: 'app_notification')]
@@ -28,7 +32,17 @@ class NotificationController extends AbstractController
     {
         $this->serializer = $serializer;
     }
-    #[Route('/send', name: 'add_notification',methods: "POST")]
+    #[Route('/send', name: 'add_notification', methods: ['POST'])]
+    #[OA\RequestBody(required: true,content: new OA\JsonContent(
+        example: [
+            "type" => "email",
+            "content" => "world",
+            "title" => "hello",
+            "to" => [1],
+            "from" => "foreignApp",
+            "isHistory" => 1
+        ]
+    ))]
     public function sendNotification(NotificationRepository $repo, Request $request, MessageBusInterface $messageBus): JsonResponse
     {
         date_default_timezone_set('Asia/Tomsk');
@@ -74,6 +88,38 @@ class NotificationController extends AbstractController
             'data' => $this->serializer->normalize($notification->toArray(), 'json'),
             'message' => 'Уведомление успешно отправлено!',
         ]);
+    }
+    #[OA\RequestBody(required: true,content: new OA\JsonContent(
+        example: [
+            "id" => 1,
+            "type" => "push",
+            "requisite" => "1234"
+        ]
+    ))]
+    #[Route('/add_requisite', name: 'add requisite', methods: 'POST')]
+    public function addRequisite(UserRequisiteRepository $repo, Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $requisite = new UserRequisite();
+        switch ($data['type']) {
+            case 'sms':
+                $requisite->setType(NotificationTypes::SMS);
+                break;
+            case 'email':
+                $requisite->setType(NotificationTypes::EMAIL);
+                break;
+            case 'tg':
+                $requisite->setType(NotificationTypes::TG);
+                break;
+            case 'push':
+                $requisite->setType(NotificationTypes::PUSH);
+                break;
+        }
+        $requisite->setRequisite($data["requisite"]);
+        $requisite->setUserId($data["id"]);
+        $repo->save($requisite, True);
+
+        return $this->json(['message' => 'Реквезиты добавлены']);
     }
 
     #[Route('/delete/{id}', name: 'delete_notification', methods: 'DELETE')]
@@ -150,7 +196,18 @@ class NotificationController extends AbstractController
 
         return $this->json(['message' => 'Все уведомления успешно помечены как прочитанные!']);
     }
-
+    #[OA\Parameter(
+        name: 'toVal',
+        description: 'id того, кому отправлено уведомление',
+        in: 'query',
+        schema: new OA\Schema(type: 'Integer')
+    )]
+    #[OA\Parameter(
+        name: 'type',
+        description: 'тип уведомления: email,sms,push,tg',
+        in: 'query',
+        schema: new OA\Schema(type: 'String')
+    )]
     #[Route('/sorted', name: 'sorted_notifications', methods: 'GET')]
     public function sortNotifications(NotificationRepository $repo, Request $request): JsonResponse
     {
@@ -161,7 +218,7 @@ class NotificationController extends AbstractController
             return $this->json(['message' => 'Отсутствует параметр type.'], Response::HTTP_BAD_REQUEST);
         }
 
-        $validTypes = ['sms', 'email', 'tg'];
+        $validTypes = ['sms', 'email', 'tg', 'push'];
 
         if (!in_array($type, $validTypes)) {
             return $this->json(['message' => 'Неверный тип уведомлений.'], Response::HTTP_BAD_REQUEST);
@@ -195,7 +252,18 @@ class NotificationController extends AbstractController
                 : "Уведомления типа '{$type}' успешно получены!",
         ]);
     }
-
+    #[OA\Parameter(
+        name: 'toVal',
+        description: 'id того, кому отправлено уведомление',
+        in: 'query',
+        schema: new OA\Schema(type: 'Integer')
+    )]
+    #[OA\Parameter(
+        name: 'isReaded',
+        description: 'прочитанно или нет',
+        in: 'query',
+        schema: new OA\Schema(type: 'Bool')
+    )]
     #[Route('/sorted-read-status', name: 'sorted_read_status_notifications', methods: 'GET')]
     public function sortNotificationsByReadStatus(NotificationRepository $repo, Request $request): JsonResponse
     {
@@ -248,4 +316,5 @@ class NotificationController extends AbstractController
                 : "Уведомления с isReaded '{$isReaded}' успешно получены!",
         ]);
     }
+
 }

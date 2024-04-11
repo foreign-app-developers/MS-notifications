@@ -20,6 +20,14 @@ class UserRequisiteRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, UserRequisite::class);
     }
+    public function save(UserRequisite $notification, bool $flush = false)
+    {
+        $this->getEntityManager()->persist($notification);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
 
 //    /**
 //     * @return UserRequisite[] Returns an array of UserRequisite objects

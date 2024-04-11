@@ -21,6 +21,7 @@
         "google/apiclient": "^2.15",
         "guzzlehttp/guzzle": "^7.8",
         "nelmio/api-doc-bundle": "^4.25",
+        "nelmio/cors-bundle": "^2.4",
         "symfony/amqp-messenger": "7.1.*",
         "symfony/asset": "7.1.*",
         "symfony/config": "^7.0",

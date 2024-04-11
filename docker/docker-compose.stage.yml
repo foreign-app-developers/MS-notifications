@@ -1,0 +1,49 @@
+version:  '3.7'
+
+networks:
+  demo:
+    external: true
+
+services:
+  ms_notification:
+    container_name: ms_notification
+    build:
+      context: dockerfile/php
+      dockerfile: Dockerfile.stage
+    restart: on-failure
+    volumes:
+      - ../app:/var/www/html
+      - ../app/vendor:/var/www/html/vendor
+    expose:
+      - "9000"
+    links:
+      - db_notific
+    networks:
+      - demo
+
+  nginx_notification:
+    container_name: nginx_foreign
+    image: nginx:latest
+    restart: on-failure
+    expose:
+      - "80"
+    volumes:
+      - ../app:/var/www/html
+      - ./logs/nginx:/var/log/nginx
+      - ./config/nginx:/etc/nginx/conf.d
+    links:
+      - php_foreign
+    networks:
+      - demo
+
+  db_notific:
+    container_name: db_notific
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_NAME=db_notification
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=admin
+    image: postgres:14.3-alpine
+    networks:
+      - demo

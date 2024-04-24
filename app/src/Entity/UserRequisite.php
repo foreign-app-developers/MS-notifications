@@ -60,4 +60,12 @@ class UserRequisite
         $this->type = $type;
         return $this;
     }
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->userId,
+            'type' => $this->type,
+            'requisite' =>$this->requisite
+        ];
+    }
 }

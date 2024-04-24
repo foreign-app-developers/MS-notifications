@@ -47,3 +47,18 @@ services:
     image: postgres:14.3-alpine
     networks:
       - demo
+
+  message_consumer_notific:
+    container_name: message_consumer_notific
+    env_file:
+      - ../app/.env
+    build: dockerfile/php
+    volumes:
+      - ../app:/var/www/html
+      - ../app/vendor:/var/www/html/vendor
+    restart: unless-stopped
+    networks:
+      - demo
+    command: [ "php", "bin/console", "messenger:consume", "async", "-vv", "--memory-limit=128M", "--limit=30", "--queues=ms_notific" ]
+    links:
+      - db_notific

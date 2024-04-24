@@ -12,6 +12,7 @@ use App\Service\EmailService;
 use App\Service\PushService;
 use App\Service\TgService;
 use App\Service\SmsService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,9 +29,25 @@ class NotificationController extends AbstractController
 {
     private SerializerInterface $serializer;
 
-    public function __construct( SerializerInterface $serializer)
+    public function __construct( SerializerInterface $serializer, EntityManagerInterface $entityManager)
     {
         $this->serializer = $serializer;
+        $this->entityManager = $entityManager;
+    }
+    #[Route('/get_requisites', name: 'getAllrequisites', methods: 'GET')]
+    public function getRequisistes(): JsonResponse
+    {
+        $userRequisiteRepository = $this->entityManager->getRepository(UserRequisite::class);
+        $reqs = $userRequisiteRepository->findAll();
+        foreach ($reqs as $req) {
+            $normalizedReqs[] = $this->serializer->normalize($req->toArray(), 'json');
+        }
+
+
+        return $this->json([
+            'data' => $normalizedReqs,
+            'message' => 'Все реквизиты успешно получены!'
+        ]);
     }
     #[Route('/send', name: 'add_notification', methods: ['POST'])]
     #[OA\RequestBody(required: true,content: new OA\JsonContent(

@@ -22,7 +22,7 @@ services:
       - demo
 
   nginx_notification:
-    container_name: nginx_foreign
+    container_name: nginx_notific
     image: nginx:latest
     restart: on-failure
     expose:

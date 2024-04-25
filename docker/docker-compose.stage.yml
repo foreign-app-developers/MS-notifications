@@ -7,9 +7,7 @@ networks:
 services:
   ms_notification:
     container_name: ms_notification
-    build:
-      context: dockerfile/php
-      dockerfile: Dockerfile.stage
+    build: dockerfile/php
     restart: on-failure
     volumes:
       - ../app:/var/www/html

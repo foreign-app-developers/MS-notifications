@@ -24,7 +24,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 
 
-#[Route('/api/notification', name: 'app_notification')]
+#[Route('/notifications', name: 'app_notification')]
 class NotificationController extends AbstractController
 {
     private SerializerInterface $serializer;

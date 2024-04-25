@@ -32,7 +32,7 @@ services:
       - ./logs/nginx:/var/log/nginx
       - ./config/nginx:/etc/nginx/conf.d
     links:
-      - php_foreign
+      - ms_notification
     networks:
       - demo
 

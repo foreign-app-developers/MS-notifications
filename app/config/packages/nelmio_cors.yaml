@@ -11,7 +11,7 @@ nelmio_cors:
         forced_allow_origin_value: ~
         skip_same_as_origin: true
     paths:
-        '^/api/':
+        '^/notifications/':
             allow_origin: ['*']
             allow_headers: ['*']
             allow_methods: ['POST', 'PUT', 'GET', 'DELETE']

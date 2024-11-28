@@ -3,7 +3,7 @@ nelmio_api_doc:
         servers:
             - url: http://localhost:8000
               description: API over HTTP
-            - url: https://xn--b1afb6bcb.xn--g1abp6e.xn----gtbbcb4bjf2ak.xn--p1ai
+            - url: https://flexlearn.ru
               description: API over HTTPS
         info:
             title: MS_Notific

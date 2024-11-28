@@ -1,7 +1,7 @@
 nelmio_api_doc:
     documentation:
         servers:
-            - url: http://localhost:8000
+            - url: http://flexlear.ru
               description: API over HTTP
             - url: https://flexlearn.ru
               description: API over HTTPS
@@ -20,3 +20,5 @@ nelmio_api_doc:
     areas:
         path_patterns: # an array of regexps (document only routes under /api, except /api/doc)
             - ^/notifications(?!/doc$)
+        host_patterns: # document only routes with a host of the form api.*
+            - ^notifications\.

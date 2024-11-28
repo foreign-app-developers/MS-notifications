@@ -108,9 +108,9 @@ class NotificationController extends AbstractController
     }
     #[OA\RequestBody(required: true,content: new OA\JsonContent(
         example: [
-            "id" => 1,
-            "type" => "push",
-            "requisite" => "1234"
+            "userId" => 1,
+            "type" => "email",
+            "requisite" => "Vovafelinger75@gmail.com"
         ]
     ))]
     #[Route('/add_requisite', name: 'add requisite', methods: 'POST')]

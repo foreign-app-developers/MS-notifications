@@ -14,7 +14,6 @@ use Fresh\DoctrineEnumBundle\Validator\Constraints as DoctrineAssert;
 class UserRequisite
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: "integer", nullable: true)]
     private ?int $userId = null;
     #[ORM\Id]

@@ -133,7 +133,7 @@ class NotificationController extends AbstractController
                 break;
         }
         $requisite->setRequisite($data["requisite"]);
-        $requisite->setUserId($data["id"]);
+        $requisite->setUserId($data["userId"]);
         $repo->save($requisite, True);
 
         return $this->json(['message' => 'Реквезиты добавлены']);

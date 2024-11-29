@@ -166,7 +166,7 @@ class NotificationController extends AbstractController
         // Create a new UserRequisite entity
         $requisite = new UserRequisite();
         $requisite->setType(NotificationTypes::EMAIL); // Set type as 'email'
-        $requisite->setRequisite($data['requisite']);
+        $requisite->setRequisite($data['email']);
         $requisite->setUserId($userId); // Set the userId to the last userId + 1
 
         // Save the new UserRequisite

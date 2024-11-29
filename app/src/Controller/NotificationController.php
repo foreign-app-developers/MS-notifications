@@ -138,7 +138,11 @@ class NotificationController extends AbstractController
 
         return $this->json(['message' => 'Реквезиты добавлены']);
     }
-
+    #[OA\RequestBody(required: true,content: new OA\JsonContent(
+        example: [
+            "email" => "Vovafelinger75@gmail.com"
+        ]
+    ))]
     #[Route('/add_email', name: 'add_email', methods: 'POST')]
     public function addEmail(UserRequisiteRepository $repo, Request $request): JsonResponse
     {

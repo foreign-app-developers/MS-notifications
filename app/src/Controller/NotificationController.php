@@ -139,6 +139,40 @@ class NotificationController extends AbstractController
         return $this->json(['message' => 'Реквезиты добавлены']);
     }
 
+    #[Route('/add_email', name: 'add_email', methods: 'POST')]
+    public function addEmail(UserRequisiteRepository $repo, Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        // Validate if email is provided
+        if (empty($data['email'])) {
+            return $this->json(['message' => 'Email address is required.'], 400);
+        }
+
+        // Check if the email already exists for the given userId
+        $existingRequisite = $repo->findOneBy(['requisite' => $data['email']]);
+        if ($existingRequisite) {
+            return $this->json(['message' => 'This email address is already exists.'], 400);
+        }
+
+        // Retrieve the last userId from the UserRequisite table
+        $lastRequisite = $repo->findOneBy([], ['id' => 'DESC']);
+        $userId = $lastRequisite ? $lastRequisite->getUserId() + 1 : 1; // Default to 1 if no records exist
+
+        // Create a new UserRequisite entity
+        $requisite = new UserRequisite();
+        $requisite->setType(NotificationTypes::EMAIL); // Set type as 'email'
+        $requisite->setRequisite($data['requisite']);
+        $requisite->setUserId($userId); // Set the userId to the last userId + 1
+
+        // Save the new UserRequisite
+        $repo->save($requisite, true);
+
+        return $this->json(['message' => 'Email address added successfully']);
+    }
+
+
+
     #[Route('/delete/{id}', name: 'delete_notification', methods: 'DELETE')]
     public function deleteNotification(NotificationRepository $repo, int $id): JsonResponse
     {

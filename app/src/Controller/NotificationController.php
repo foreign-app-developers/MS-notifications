@@ -160,7 +160,7 @@ class NotificationController extends AbstractController
         }
 
         // Retrieve the last userId from the UserRequisite table
-        $lastRequisite = $repo->findOneBy([], ['id' => 'DESC']);
+        $lastRequisite = $repo->findOneBy([], ['userId' => 'DESC']);
         $userId = $lastRequisite ? $lastRequisite->getUserId() + 1 : 1; // Default to 1 if no records exist
 
         // Create a new UserRequisite entity

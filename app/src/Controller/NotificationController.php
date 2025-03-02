@@ -156,7 +156,7 @@ class NotificationController extends AbstractController
         // Check if the email already exists for the given userId
         $existingRequisite = $repo->findOneBy(['requisite' => $data['email']]);
         if ($existingRequisite) {
-            return $this->json(['message' => 'This email address is already exists.'], 400);
+            return $this->json(['message' => 'Спасибо, у нас уже есть ваш email!'], 400);
         }
 
         // Retrieve the last userId from the UserRequisite table
@@ -172,7 +172,7 @@ class NotificationController extends AbstractController
         // Save the new UserRequisite
         $repo->save($requisite, true);
 
-        return $this->json(['message' => 'Email address added successfully']);
+        return $this->json(['message' => 'Спасибо!']);
     }
 
 

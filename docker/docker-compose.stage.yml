@@ -36,6 +36,8 @@ services:
 
   db_notific:
     container_name: db_notific
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
     expose:
       - "5432"
     environment:
